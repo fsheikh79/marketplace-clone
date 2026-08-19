@@ -48,7 +48,7 @@ export default function Home() {
               the catalog, add to cart, and check out in seconds.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/category/electronics">
+              <Link href="/products">
                 <Button variant="primary" className="h-12 px-7 text-base">
                   Start shopping
                 </Button>
@@ -91,7 +91,7 @@ export default function Home() {
           {CATEGORIES.map(({ label, slug, icon: Icon, tint }) => (
             <Link
               key={slug}
-              href={`/category/${slug}`}
+              href={`/products?category=${slug}`}
               className="group border-surface-border focus-visible:outline-brand-500 flex flex-col items-center gap-3 rounded-lg border bg-white p-5 text-center shadow-sm transition-shadow hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <span
@@ -122,7 +122,7 @@ export default function Home() {
                 Curated by real customer ratings.
               </p>
             </div>
-            <Link href="/category/electronics">
+            <Link href="/products?category=electronics">
               <Button variant="secondary-on-dark" className="w-fit">
                 Browse best sellers
               </Button>
@@ -140,7 +140,7 @@ export default function Home() {
                 Fresh picks, added regularly.
               </p>
             </div>
-            <Link href="/category/books">
+            <Link href="/products?category=books">
               <Button variant="primary" className="w-fit">
                 See what&apos;s new
               </Button>

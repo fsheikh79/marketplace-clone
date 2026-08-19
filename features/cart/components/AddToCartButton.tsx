@@ -1,21 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/features/cart/context/CartContext";
+import { useToast } from "@/features/toast/context/ToastContext";
 
 export function AddToCartButton({ product }: { product: Product }) {
   const { addItem } = useCart();
+  const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const outOfStock = product.stock === 0;
 
   function handleAdd() {
-    addItem(product, quantity);
-    setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 2000);
+    setIsAdding(true);
+    // MOCK: a brief delay standing in for a real add-to-cart API call, so
+    // the disabled/loading state is meaningful rather than instantaneous.
+    window.setTimeout(() => {
+      addItem(product, quantity);
+      showToast(`Added ${quantity} × ${product.title} to your cart`);
+      setIsAdding(false);
+    }, 400);
   }
 
   return (
@@ -26,7 +33,7 @@ export function AddToCartButton({ product }: { product: Product }) {
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            disabled={quantity <= 1}
+            disabled={quantity <= 1 || isAdding}
             aria-label="Decrease quantity"
             className="text-brand-900 flex h-9 w-9 items-center justify-center disabled:opacity-40"
           >
@@ -41,7 +48,7 @@ export function AddToCartButton({ product }: { product: Product }) {
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-            disabled={quantity >= product.stock}
+            disabled={quantity >= product.stock || isAdding}
             aria-label="Increase quantity"
             className="text-brand-900 flex h-9 w-9 items-center justify-center disabled:opacity-40"
           >
@@ -53,18 +60,11 @@ export function AddToCartButton({ product }: { product: Product }) {
       <Button
         type="button"
         onClick={handleAdd}
-        disabled={outOfStock}
+        disabled={outOfStock || isAdding}
+        isLoading={isAdding}
         className="w-full sm:w-64"
       >
-        {justAdded ? (
-          <>
-            <Check className="h-4 w-4" /> Added to cart
-          </>
-        ) : outOfStock ? (
-          "Out of stock"
-        ) : (
-          "Add to cart"
-        )}
+        {outOfStock ? "Out of stock" : "Add to cart"}
       </Button>
     </div>
   );

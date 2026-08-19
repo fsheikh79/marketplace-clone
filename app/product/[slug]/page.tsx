@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import {
-  getAllProducts,
-  getProductBySlug,
-  getRelatedProducts,
-} from "@/features/products/lib/mockProducts";
+import { getAllProducts } from "@/features/products/lib/mockProducts";
+import { getProductBySlug, getRelatedProducts } from "@/features/products/api";
 import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { StarRating } from "@/features/products/components/StarRating";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
-import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
-import { ReviewsSection } from "@/features/reviews/components/ReviewsSection";
 import { formatPrice } from "@/lib/format";
 
 export function generateStaticParams() {
@@ -24,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   return {
     title: product ? `${product.title} — marketplace` : "Product not found",
   };
@@ -36,11 +31,11 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   const category = getCategoryBySlug(product.category);
-  const related = getRelatedProducts(product);
+  const related = await getRelatedProducts(product);
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8">
@@ -52,7 +47,7 @@ export default async function ProductPage({
           <>
             {" / "}
             <Link
-              href={`/category/${category.slug}`}
+              href={`/products?category=${category.slug}`}
               className="hover:text-brand-900 hover:underline"
             >
               {category.label}
@@ -116,14 +111,11 @@ export default async function ProductPage({
 
           <p className="leading-relaxed text-zinc-700">{product.description}</p>
 
-          <div className="flex items-start gap-3 pt-2">
+          <div className="pt-2">
             <AddToCartButton product={product} />
-            <WishlistButton productId={product.id} variant="inline" />
           </div>
         </div>
       </div>
-
-      <ReviewsSection productId={product.id} />
 
       {related.length > 0 && (
         <section className="mt-16">

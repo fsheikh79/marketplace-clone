@@ -15,6 +15,7 @@ const initialValues: ShippingFormValues = {
   state: "",
   postalCode: "",
   country: "United States",
+  phone: "",
 };
 
 export function useShippingForm() {
@@ -38,6 +39,16 @@ export function ShippingForm({
         onChange={(e) => handleChange("fullName", e.target.value)}
         onBlur={() => handleBlur("fullName")}
         error={touched.fullName ? errors.fullName : undefined}
+      />
+      <Input
+        label="Phone number"
+        name="phone"
+        type="tel"
+        autoComplete="tel"
+        value={values.phone}
+        onChange={(e) => handleChange("phone", e.target.value)}
+        onBlur={() => handleBlur("phone")}
+        error={touched.phone ? errors.phone : undefined}
       />
       <Input
         label="Street address"

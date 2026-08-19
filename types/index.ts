@@ -67,6 +67,7 @@ export interface Order {
     state: string;
     postalCode: string;
     country: string;
+    phone: string;
   };
 }
 

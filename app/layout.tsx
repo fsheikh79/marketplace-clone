@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { CartProvider } from "@/features/cart/context/CartContext";
-import { WishlistProvider } from "@/features/wishlist/context/WishlistContext";
+import { ToastProvider } from "@/features/toast/context/ToastContext";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
@@ -32,11 +32,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="bg-surface text-brand-950 flex min-h-full flex-col">
         <AuthProvider>
           <CartProvider>
-            <WishlistProvider>
+            <ToastProvider>
               <Header />
               <main className="flex flex-1 flex-col">{children}</main>
               <Footer />
-            </WishlistProvider>
+            </ToastProvider>
           </CartProvider>
         </AuthProvider>
       </body>

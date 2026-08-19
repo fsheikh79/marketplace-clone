@@ -8,9 +8,11 @@ export interface ShippingFormValues {
   state: string;
   postalCode: string;
   country: string;
+  phone: string;
 }
 
 const POSTAL_CODE_RE = /^[A-Za-z0-9][A-Za-z0-9\s-]{2,9}$/;
+const PHONE_RE = /^[+]?[\d\s()-]{7,20}$/;
 
 function required(value: string, label: string): string | undefined {
   return value.trim() ? undefined : `${label} is required.`;
@@ -28,5 +30,10 @@ export function validateShippingForm(values: ShippingFormValues): FieldErrors {
         ? "Enter a valid postal code."
         : undefined,
     country: required(values.country, "Country"),
+    phone: !values.phone.trim()
+      ? "Phone number is required."
+      : !PHONE_RE.test(values.phone.trim())
+        ? "Enter a valid phone number."
+        : undefined,
   };
 }

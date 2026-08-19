@@ -2,9 +2,10 @@ import type { Product } from "@/types";
 import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { placeholderProductImage } from "@/features/products/lib/placeholderImage";
 
-// MOCK: static in-memory product catalog. Replace with API Gateway/Lambda
-// reads from DynamoDB in Phase 2 — callers below (getAllProducts,
-// getProductsByCategory, getProductBySlug) are the seam to swap.
+// MOCK: static in-memory product catalog. This module is the raw
+// synchronous data source; application code should go through the async
+// wrappers in features/products/api.ts instead of importing from here
+// directly, so the later swap to real DynamoDB reads is a drop-in change.
 
 interface ProductSeed {
   slug: string;
@@ -432,24 +433,9 @@ export function getProductBySlug(slug: string): Product | undefined {
   return ALL_PRODUCTS.find((product) => product.slug === slug);
 }
 
-export function getProductById(id: string): Product | undefined {
-  return ALL_PRODUCTS.find((product) => product.id === id);
-}
-
 export function getRelatedProducts(product: Product, limit = 4): Product[] {
   return ALL_PRODUCTS.filter(
     (candidate) =>
       candidate.category === product.category && candidate.id !== product.id,
   ).slice(0, limit);
-}
-
-export function searchProducts(query: string): Product[] {
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) return [];
-  return ALL_PRODUCTS.filter((product) =>
-    [product.title, product.brand, product.category, product.description]
-      .join(" ")
-      .toLowerCase()
-      .includes(normalized),
-  );
 }

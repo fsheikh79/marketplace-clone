@@ -10,13 +10,10 @@ import { formatPrice } from "@/lib/format";
 
 export default function OrderConfirmationPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ orderId: string }>;
-  searchParams: Promise<{ placed?: string }>;
 }) {
   const { orderId } = use(params);
-  const { placed } = use(searchParams);
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
 
   useEffect(() => {
@@ -50,27 +47,15 @@ export default function OrderConfirmationPage({
       <div className="flex flex-col items-center gap-3 text-center">
         <CheckCircle2 className="text-secondary-600 h-14 w-14" />
         <h1 className="text-brand-950 text-2xl font-extrabold">
-          {placed === "1" ? "Order confirmed" : "Order details"}
+          Order confirmed
         </h1>
-        {placed === "1" ? (
-          <p className="text-zinc-600">
-            Thanks
-            {order.shippingAddress.fullName
-              ? `, ${order.shippingAddress.fullName.split(" ")[0]}`
-              : ""}
-            ! Your order has been placed.
-          </p>
-        ) : (
-          <p className="text-zinc-600">
-            Placed on{" "}
-            {new Date(order.createdAt).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}{" "}
-            &middot; Status: {order.status}
-          </p>
-        )}
+        <p className="text-zinc-600">
+          Thanks
+          {order.shippingAddress.fullName
+            ? `, ${order.shippingAddress.fullName.split(" ")[0]}`
+            : ""}
+          ! Your order has been placed.
+        </p>
         <p className="text-sm text-zinc-500">
           Order ID: <span className="font-mono">{order.id}</span>
         </p>
@@ -115,6 +100,8 @@ export default function OrderConfirmationPage({
           {order.shippingAddress.postalCode}
           <br />
           {order.shippingAddress.country}
+          <br />
+          {order.shippingAddress.phone}
         </address>
       </div>
 

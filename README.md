@@ -25,40 +25,30 @@ calls later is a drop-in change, not a rewrite.
 Every point where a mock stands in for a future real API call is marked with
 a `// MOCK: ...` comment.
 
-## Sub-phase 1b — product catalog, cart, checkout
+## Sub-phase 1b — core commerce UI
 
 - Mock product catalog (30 products across 6 categories) with generated
   SVG placeholder art — no external image hosting dependency
-- Product listing (`/category/[slug]`) and detail (`/product/[slug]`) pages,
-  statically generated
+- Async mock API layer (`features/products/api.ts`): every product read
+  (`getProducts`, `getProductBySlug`, `getRelatedProducts`) returns a
+  Promise with a small artificial latency, so call sites already look async
+  and a later swap to real `fetch()` calls is a drop-in change
+- Product listing (`/products`): responsive grid, category filter (sidebar
+  and header nav, URL-synced), price range filter, sort (price asc/desc,
+  newest), numbered pagination, loading skeletons, and an empty state
+- Product detail (`/product/[slug]`): image, price, stock status, quantity
+  selector, add-to-cart with toast feedback and a disabled/loading state
+  during the action (not a silent no-op)
 - Cart: `localStorage`-persisted `useCart()` context (`addItem`,
   `removeItem`, `updateQuantity`, `clearCart`, `totalItems`, `subtotal`),
   live badge count in the header
-- Checkout: validated shipping-address form, guest or signed-in, creates a
-  mock order and redirects to an order confirmation page
-- Homepage and header category links now point at real listing pages
-
-## Sub-phase 1c — search, account area, reviews
-
-- Working client-side search: header search bar submits to `/search?q=...`,
-  matching against title, brand, category, and description
-- Account area (sign-in required): `/account` profile overview,
-  `/account/orders` order history (`getOrdersByUserId`), linked from the
-  account dropdown and footer
-- Product reviews: `localStorage`-backed mock review store (seeded with a
-  few starter reviews), read on every product page, write requires sign-in
-- Order confirmation page now doubles as an order detail view when reached
-  from order history, not just fresh checkout
-
-## Sub-phase 1d — filtering/sorting, wishlist
-
-- Filtering and sorting on `/category/[slug]` and `/search`: price range,
-  minimum rating, sort by price/rating/newest — driven by URL query params
-  via a shared `FilterSortBar`
-- Wishlist: `localStorage`-persisted `useWishlist()` context
-  (`productIds`, `toggle`, `isSaved`) mirroring the cart's pattern, a heart
-  toggle on every product card and detail page, and a sign-in-gated
-  `/account/wishlist` page
+- Checkout: a 3-step flow (shipping → review → payment) with a step
+  indicator; shipping form (name, phone, address, city, postal code) is
+  validated separately from presentation; the payment step is a clearly
+  marked UI shell for a future Stripe Elements embed — no real or fake
+  payment logic. "Place order" mocks order creation, clears the cart, and
+  redirects to a confirmation page. Both guest and signed-in checkout are
+  supported.
 
 ## Getting started
 
@@ -79,16 +69,14 @@ npm run build   # Production build + type check
 ```
 /app                  — routes (App Router)
 /components/ui        — generic UI primitives (Button, Input)
-/components/layout    — Header, Footer, AccountMenu, CartButton, SearchBar
+/components/layout    — Header, Footer, AccountMenu, CartButton
 /features/auth        — auth context, forms, validation, mock user store
-/features/products    — categories, mock catalog, search, filter/sort, product cards/grid
-/features/cart         — cart context, cart UI
-/features/checkout    — shipping form + validation
-/features/orders      — mock order store, order status badge
-/features/account     — sign-in gate, account nav
-/features/reviews     — mock review store, review list/form
-/features/wishlist    — wishlist context, wishlist button
-/types                 — shared domain types (User, Product, CartItem, Order, Review)
+/features/products    — mock catalog, async api.ts, listing/filter/sort/pagination UI
+/features/cart        — cart context, cart UI
+/features/checkout    — multi-step checkout, shipping form + validation, payment placeholder
+/features/orders      — mock order store
+/features/toast       — toast notification context
+/types                — shared domain types (User, Product, CartItem, Order, Review)
 /.env.example          — placeholder vars for future AWS config (Cognito, API Gateway, Stripe)
 ```
 
