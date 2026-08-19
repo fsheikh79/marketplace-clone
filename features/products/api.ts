@@ -1,6 +1,7 @@
 import type { Product } from "@/types";
 import {
   getAllProducts,
+  getProductById as getProductByIdSync,
   getProductBySlug as getProductBySlugSync,
   getRelatedProducts as getRelatedProductsSync,
 } from "@/features/products/lib/mockProducts";
@@ -105,4 +106,23 @@ export async function getRelatedProducts(
   limit = 4,
 ): Promise<Product[]> {
   return delay(getRelatedProductsSync(product, limit));
+}
+
+export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+  const products = ids
+    .map((id) => getProductByIdSync(id))
+    .filter((product): product is Product => Boolean(product));
+  return delay(products);
+}
+
+export async function searchProducts(query: string): Promise<Product[]> {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return delay([]);
+  const matches = getAllProducts().filter((product) =>
+    [product.title, product.brand, product.category, product.description]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalized),
+  );
+  return delay(matches);
 }

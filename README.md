@@ -50,6 +50,24 @@ a `// MOCK: ...` comment.
   redirects to a confirmation page. Both guest and signed-in checkout are
   supported.
 
+## Sub-phase 1c — reviews, wishlist, search
+
+- Reviews: `localStorage`-backed mock review store (seeded with a few
+  starter reviews), read on every product page, write requires sign-in
+  (guests see an inline sign-in prompt) and appears immediately on submit
+- Wishlist: a standalone `useWishlist()` context (`productIds`, `toggle`,
+  `isSaved`) that knows nothing about auth — gating is decided at the UI
+  layer (`WishlistButton` composes `useAuth()` + `useWishlist()`) so the
+  contexts stay decoupled. **Wishlist actions require sign-in** (consistent
+  with reviews); guests get a toast prompting them to sign in instead of a
+  silent no-op. Heart toggle on every product card and the detail page,
+  plus a dedicated `/wishlist` page with a "Move to cart" action per item
+- Search: the header search bar is now functional, submitting to
+  `/search?q=...`; results reuse the same `ProductGrid` component as the
+  listing page rather than a duplicate, with a graceful empty-results state
+- Related products ("You might also like") already existed from 1b — same
+  simple same-category logic, unchanged
+
 ## Getting started
 
 ```bash
@@ -76,6 +94,8 @@ npm run build   # Production build + type check
 /features/checkout    — multi-step checkout, shipping form + validation, payment placeholder
 /features/orders      — mock order store
 /features/toast       — toast notification context
+/features/reviews     — mock review store, review list/form
+/features/wishlist    — wishlist context, wishlist button
 /types                — shared domain types (User, Product, CartItem, Order, Review)
 /.env.example          — placeholder vars for future AWS config (Cognito, API Gateway, Stripe)
 ```

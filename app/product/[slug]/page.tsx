@@ -7,6 +7,8 @@ import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { StarRating } from "@/features/products/components/StarRating";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
+import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
+import { ReviewsSection } from "@/features/reviews/components/ReviewsSection";
 import { formatPrice } from "@/lib/format";
 
 export function generateStaticParams() {
@@ -111,16 +113,19 @@ export default async function ProductPage({
 
           <p className="leading-relaxed text-zinc-700">{product.description}</p>
 
-          <div className="pt-2">
+          <div className="flex items-start gap-3 pt-2">
             <AddToCartButton product={product} />
+            <WishlistButton productId={product.id} variant="inline" />
           </div>
         </div>
       </div>
 
+      <ReviewsSection productId={product.id} />
+
       {related.length > 0 && (
         <section className="mt-16">
           <h2 className="text-brand-950 mb-6 text-xl font-extrabold">
-            You might also like
+            Related products
           </h2>
           <ProductGrid products={related} />
         </section>
