@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, User as UserIcon, LogOut } from "lucide-react";
+import { ChevronDown, User as UserIcon, LogOut, Package } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
 export function AccountMenu() {
@@ -71,6 +71,24 @@ export function AccountMenu() {
           <div className="border-surface-border border-b px-4 py-2 text-xs text-zinc-500">
             {currentUser.email}
           </div>
+          <Link
+            href="/account"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+            className="text-brand-900 hover:bg-surface-muted flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+          >
+            <UserIcon className="h-4 w-4" aria-hidden="true" />
+            Your account
+          </Link>
+          <Link
+            href="/account/orders"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+            className="text-brand-900 hover:bg-surface-muted flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+          >
+            <Package className="h-4 w-4" aria-hidden="true" />
+            Your orders
+          </Link>
           <button
             type="button"
             role="menuitem"
@@ -78,7 +96,7 @@ export function AccountMenu() {
               logOut();
               setIsOpen(false);
             }}
-            className="text-brand-900 hover:bg-surface-muted flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+            className="text-brand-900 hover:bg-surface-muted border-surface-border flex w-full items-center gap-2 border-t px-4 py-2 text-left text-sm"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" />
             Sign out

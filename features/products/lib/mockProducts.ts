@@ -438,3 +438,14 @@ export function getRelatedProducts(product: Product, limit = 4): Product[] {
       candidate.category === product.category && candidate.id !== product.id,
   ).slice(0, limit);
 }
+
+export function searchProducts(query: string): Product[] {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return [];
+  return ALL_PRODUCTS.filter((product) =>
+    [product.title, product.brand, product.category, product.description]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalized),
+  );
+}

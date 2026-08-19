@@ -10,6 +10,7 @@ import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { StarRating } from "@/features/products/components/StarRating";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
+import { ReviewsSection } from "@/features/reviews/components/ReviewsSection";
 import { formatPrice } from "@/lib/format";
 
 export function generateStaticParams() {
@@ -119,6 +120,8 @@ export default async function ProductPage({
           </div>
         </div>
       </div>
+
+      <ReviewsSection productId={product.id} />
 
       {related.length > 0 && (
         <section className="mt-16">

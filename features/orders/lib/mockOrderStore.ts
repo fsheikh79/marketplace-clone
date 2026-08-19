@@ -63,3 +63,9 @@ export function createOrder(
 export function getOrderById(id: string): Order | undefined {
   return readOrders().find((order) => order.id === id);
 }
+
+export function getOrdersByUserId(userId: string): Order[] {
+  return readOrders()
+    .filter((order) => order.userId === userId)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Suspense } from "react";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { CartButton } from "@/components/layout/CartButton";
+import { SearchBar } from "@/components/layout/SearchBar";
 import { CATEGORIES } from "@/features/products/lib/categories";
 
 const CATEGORY_LINKS = [
@@ -25,27 +26,9 @@ export function Header() {
         </Link>
 
         <div className="order-3 w-full sm:order-2 sm:w-auto sm:flex-1">
-          <label htmlFor="site-search" className="sr-only">
-            Search products
-          </label>
-          <div className="relative">
-            <input
-              id="site-search"
-              type="search"
-              placeholder="Search products, brands, and categories"
-              disabled
-              className="text-brand-950 focus:border-accent-500 h-11 w-full rounded-md border-2 border-transparent bg-white pr-12 pl-4 text-sm placeholder:text-zinc-500 focus:outline-none disabled:cursor-not-allowed"
-              // MOCK: placeholder input, wired up once product search lands.
-            />
-            <button
-              type="button"
-              disabled
-              aria-label="Search"
-              className="bg-accent-500 text-brand-950 absolute top-0 right-0 flex h-11 w-11 items-center justify-center rounded-r-md disabled:cursor-not-allowed"
-            >
-              <Search className="h-5 w-5" aria-hidden="true" />
-            </button>
-          </div>
+          <Suspense fallback={<div className="h-11 rounded-md bg-white" />}>
+            <SearchBar />
+          </Suspense>
         </div>
 
         <div className="order-2 ml-auto flex items-center gap-1 sm:order-3 sm:ml-0">

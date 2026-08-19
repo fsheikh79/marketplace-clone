@@ -46,7 +46,7 @@ export default function CheckoutPage() {
     // call (payment capture + order write) in Phase 2.
     const order = createOrder(items, form.values, currentUser?.id ?? null);
     clearCart();
-    router.push(`/order-confirmation/${order.id}`);
+    router.push(`/order-confirmation/${order.id}?placed=1`);
   }
 
   return (

@@ -18,7 +18,7 @@ const FOOTER_SECTIONS: {
   {
     title: "Let us help you",
     links: [
-      { label: "Your orders", href: "/orders" },
+      { label: "Your orders", href: "/account/orders" },
       { label: "Shipping rates & policies", href: "/shipping" },
       { label: "Returns & replacements", href: "/returns" },
       { label: "Help center", href: "/help" },

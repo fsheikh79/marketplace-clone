@@ -38,6 +38,18 @@ a `// MOCK: ...` comment.
   mock order and redirects to an order confirmation page
 - Homepage and header category links now point at real listing pages
 
+## Sub-phase 1c — search, account area, reviews
+
+- Working client-side search: header search bar submits to `/search?q=...`,
+  matching against title, brand, category, and description
+- Account area (sign-in required): `/account` profile overview,
+  `/account/orders` order history (`getOrdersByUserId`), linked from the
+  account dropdown and footer
+- Product reviews: `localStorage`-backed mock review store (seeded with a
+  few starter reviews), read on every product page, write requires sign-in
+- Order confirmation page now doubles as an order detail view when reached
+  from order history, not just fresh checkout
+
 ## Getting started
 
 ```bash
@@ -57,12 +69,14 @@ npm run build   # Production build + type check
 ```
 /app                  — routes (App Router)
 /components/ui        — generic UI primitives (Button, Input)
-/components/layout    — Header, Footer, AccountMenu, CartButton
+/components/layout    — Header, Footer, AccountMenu, CartButton, SearchBar
 /features/auth        — auth context, forms, validation, mock user store
-/features/products    — categories, mock catalog, product cards/grid
+/features/products    — categories, mock catalog, search, product cards/grid
 /features/cart         — cart context, cart UI
 /features/checkout    — shipping form + validation
-/features/orders      — mock order store
+/features/orders      — mock order store, order status badge
+/features/account     — sign-in gate, account nav
+/features/reviews     — mock review store, review list/form
 /types                 — shared domain types (User, Product, CartItem, Order, Review)
 /.env.example          — placeholder vars for future AWS config (Cognito, API Gateway, Stripe)
 ```
