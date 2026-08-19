@@ -10,6 +10,7 @@ import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { StarRating } from "@/features/products/components/StarRating";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
+import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 import { ReviewsSection } from "@/features/reviews/components/ReviewsSection";
 import { formatPrice } from "@/lib/format";
 
@@ -115,8 +116,9 @@ export default async function ProductPage({
 
           <p className="leading-relaxed text-zinc-700">{product.description}</p>
 
-          <div className="pt-2">
+          <div className="flex items-start gap-3 pt-2">
             <AddToCartButton product={product} />
+            <WishlistButton productId={product.id} variant="inline" />
           </div>
         </div>
       </div>

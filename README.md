@@ -50,6 +50,16 @@ a `// MOCK: ...` comment.
 - Order confirmation page now doubles as an order detail view when reached
   from order history, not just fresh checkout
 
+## Sub-phase 1d — filtering/sorting, wishlist
+
+- Filtering and sorting on `/category/[slug]` and `/search`: price range,
+  minimum rating, sort by price/rating/newest — driven by URL query params
+  via a shared `FilterSortBar`
+- Wishlist: `localStorage`-persisted `useWishlist()` context
+  (`productIds`, `toggle`, `isSaved`) mirroring the cart's pattern, a heart
+  toggle on every product card and detail page, and a sign-in-gated
+  `/account/wishlist` page
+
 ## Getting started
 
 ```bash
@@ -71,12 +81,13 @@ npm run build   # Production build + type check
 /components/ui        — generic UI primitives (Button, Input)
 /components/layout    — Header, Footer, AccountMenu, CartButton, SearchBar
 /features/auth        — auth context, forms, validation, mock user store
-/features/products    — categories, mock catalog, search, product cards/grid
+/features/products    — categories, mock catalog, search, filter/sort, product cards/grid
 /features/cart         — cart context, cart UI
 /features/checkout    — shipping form + validation
 /features/orders      — mock order store, order status badge
 /features/account     — sign-in gate, account nav
 /features/reviews     — mock review store, review list/form
+/features/wishlist    — wishlist context, wishlist button
 /types                 — shared domain types (User, Product, CartItem, Order, Review)
 /.env.example          — placeholder vars for future AWS config (Cognito, API Gateway, Stripe)
 ```

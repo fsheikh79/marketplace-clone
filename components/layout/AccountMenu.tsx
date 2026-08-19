@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, User as UserIcon, LogOut, Package } from "lucide-react";
+import {
+  ChevronDown,
+  User as UserIcon,
+  LogOut,
+  Package,
+  Heart,
+} from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
 export function AccountMenu() {
@@ -88,6 +94,15 @@ export function AccountMenu() {
           >
             <Package className="h-4 w-4" aria-hidden="true" />
             Your orders
+          </Link>
+          <Link
+            href="/account/wishlist"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+            className="text-brand-900 hover:bg-surface-muted flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
+          >
+            <Heart className="h-4 w-4" aria-hidden="true" />
+            Your wishlist
           </Link>
           <button
             type="button"
