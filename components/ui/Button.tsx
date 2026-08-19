@@ -1,19 +1,25 @@
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "secondary-on-dark" | "ghost";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   isLoading?: boolean;
 }
 
+// One accent color, one hierarchy: primary is the only filled/CTA style,
+// secondary is its outlined counterpart (secondary-on-dark for use on brand
+// navy surfaces), ghost is text-only for low-emphasis actions. No other
+// color pairing should be introduced ad hoc.
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-amber-500 text-zinc-900 hover:bg-amber-400 focus-visible:outline-amber-500",
+    "bg-accent-500 text-brand-950 hover:bg-accent-600 focus-visible:outline-accent-600",
   secondary:
-    "bg-zinc-900 text-white hover:bg-zinc-800 focus-visible:outline-zinc-900 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200",
+    "border-2 border-brand-900 bg-transparent text-brand-900 hover:bg-brand-900 hover:text-white focus-visible:outline-brand-900",
+  "secondary-on-dark":
+    "border-2 border-white bg-transparent text-white hover:bg-white hover:text-brand-950 focus-visible:outline-white",
   ghost:
-    "bg-transparent text-zinc-900 hover:bg-zinc-100 focus-visible:outline-zinc-400 dark:text-zinc-100 dark:hover:bg-zinc-800",
+    "bg-transparent text-brand-800 hover:bg-surface-muted focus-visible:outline-brand-500",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -32,7 +38,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         disabled={disabled || isLoading}
-        className={`inline-flex h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
+        className={`inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
         {...props}
       >
         {isLoading && (

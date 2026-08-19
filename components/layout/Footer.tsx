@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 const FOOTER_SECTIONS: {
   title: string;
@@ -43,19 +46,25 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 md:grid-cols-4 lg:px-8">
+    <footer className="bg-brand-950 text-zinc-300">
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="bg-brand-800 hover:bg-brand-700 hidden w-full py-3 text-center text-xs font-semibold text-white sm:block"
+      >
+        Back to top
+      </button>
+
+      <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 md:grid-cols-4 lg:px-8">
         {FOOTER_SECTIONS.map((section) => (
           <div key={section.title}>
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-              {section.title}
-            </h3>
+            <h3 className="text-sm font-bold text-white">{section.title}</h3>
             <ul className="mt-3 space-y-2">
               {section.links.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-zinc-600 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+                    className="text-sm text-zinc-400 hover:text-white hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -65,7 +74,21 @@ export function Footer() {
           </div>
         ))}
       </div>
-      <div className="border-t border-zinc-200 px-4 py-4 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+
+      <div className="border-t border-white/10 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-4 text-center">
+          <span className="text-lg font-black tracking-tight text-white">
+            market<span className="text-accent-500">place</span>
+          </span>
+          <p className="max-w-md text-sm text-zinc-400">
+            Get order updates, exclusive deals, and new arrivals straight to
+            your inbox.
+          </p>
+          <Button variant="secondary-on-dark">Subscribe to updates</Button>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10 px-4 py-4 text-center text-xs text-zinc-500">
         &copy; {year} marketplace. All rights reserved.
       </div>
     </footer>

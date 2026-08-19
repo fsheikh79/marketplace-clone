@@ -93,7 +93,7 @@ export function SignUpForm() {
       />
 
       {submitError && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-red-600">
           {submitError}
         </p>
       )}
@@ -102,11 +102,11 @@ export function SignUpForm() {
         Create account
       </Button>
 
-      <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-center text-sm text-zinc-600">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-medium text-amber-600 hover:underline dark:text-amber-400"
+          className="text-secondary-600 font-medium hover:underline"
         >
           Sign in
         </Link>

@@ -14,13 +14,13 @@ export default function ForgotPasswordPage() {
       title="Reset your password"
       subtitle="Password reset isn't available yet in this preview build."
     >
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-zinc-600">
         This flow will send a reset link to your email once account recovery is
         wired up to a real auth backend in a later phase.
       </p>
       <Link
         href="/login"
-        className="mt-6 inline-block text-sm font-medium text-amber-600 hover:underline dark:text-amber-400"
+        className="text-secondary-600 mt-6 inline-block text-sm font-medium hover:underline"
       >
         Back to sign in
       </Link>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, LogOut, User as UserIcon } from "lucide-react";
+import { ChevronDown, User as UserIcon, LogOut } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
 export function AccountMenu() {
@@ -21,19 +21,22 @@ export function AccountMenu() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="h-9 w-24 animate-pulse rounded-md bg-zinc-200 dark:bg-zinc-800" />
-    );
+    return <div className="h-9 w-24 animate-pulse rounded-md bg-white/10" />;
   }
 
   if (!currentUser) {
     return (
       <Link
         href="/login"
-        className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="focus-visible:outline-accent-500 flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         <UserIcon className="h-5 w-5" aria-hidden="true" />
-        Sign in
+        <span className="hidden sm:flex sm:flex-col sm:items-start sm:leading-tight">
+          <span className="text-[11px] font-normal text-zinc-300">
+            Hello, sign in
+          </span>
+          <span>Account</span>
+        </span>
       </Link>
     );
   }
@@ -52,9 +55,9 @@ export function AccountMenu() {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="focus-visible:outline-accent-500 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-xs font-semibold text-zinc-900">
+        <span className="bg-accent-500 text-brand-950 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold">
           {initials}
         </span>
         <span className="hidden sm:inline">{currentUser.name}</span>
@@ -63,9 +66,9 @@ export function AccountMenu() {
       {isOpen && (
         <div
           role="menu"
-          className="absolute top-full right-0 z-20 mt-2 w-48 overflow-hidden rounded-md border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
+          className="border-surface-border text-brand-950 absolute top-full right-0 z-20 mt-2 w-52 overflow-hidden rounded-md border bg-white py-1 shadow-xl"
         >
-          <div className="border-b border-zinc-100 px-4 py-2 text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+          <div className="border-surface-border border-b px-4 py-2 text-xs text-zinc-500">
             {currentUser.email}
           </div>
           <button
@@ -75,7 +78,7 @@ export function AccountMenu() {
               logOut();
               setIsOpen(false);
             }}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="text-brand-900 hover:bg-surface-muted flex w-full items-center gap-2 px-4 py-2 text-left text-sm"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" />
             Sign out

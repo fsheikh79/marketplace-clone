@@ -8,13 +8,13 @@ export function ContinueAsGuest() {
   return (
     <div className="mt-6 flex flex-col items-center gap-4">
       <div className="flex w-full items-center gap-3">
-        <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+        <div className="bg-surface-border h-px flex-1" />
         <span className="text-xs font-medium text-zinc-400 uppercase">or</span>
-        <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+        <div className="bg-surface-border h-px flex-1" />
       </div>
       <Link
         href="/"
-        className="text-sm font-medium text-zinc-700 hover:underline dark:text-zinc-300"
+        className="text-brand-800 text-sm font-medium hover:underline"
       >
         Continue as guest
       </Link>

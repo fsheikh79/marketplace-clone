@@ -70,14 +70,14 @@ export function LogInForm() {
         />
         <Link
           href="/forgot-password"
-          className="self-end text-sm font-medium text-amber-600 hover:underline dark:text-amber-400"
+          className="text-secondary-600 self-end text-sm font-medium hover:underline"
         >
           Forgot password?
         </Link>
       </div>
 
       {submitError && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-red-600">
           {submitError}
         </p>
       )}
@@ -86,11 +86,11 @@ export function LogInForm() {
         Sign in
       </Button>
 
-      <p className="text-center text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-center text-sm text-zinc-600">
         New here?{" "}
         <Link
           href="/signup"
-          className="font-medium text-amber-600 hover:underline dark:text-amber-400"
+          className="text-secondary-600 font-medium hover:underline"
         >
           Create an account
         </Link>
