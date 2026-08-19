@@ -1,56 +1,7 @@
 import Link from "next/link";
-import {
-  BookOpen,
-  Cpu,
-  Dumbbell,
-  Headphones,
-  Home as HomeIcon,
-  RotateCcw,
-  Shirt,
-  ShieldCheck,
-  Sparkles,
-  Truck,
-} from "lucide-react";
+import { Headphones, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-
-const CATEGORIES = [
-  {
-    label: "Electronics",
-    href: "/category/electronics",
-    icon: Cpu,
-    tint: "bg-secondary-500",
-  },
-  {
-    label: "Fashion",
-    href: "/category/fashion",
-    icon: Shirt,
-    tint: "bg-accent-600",
-  },
-  {
-    label: "Home & Kitchen",
-    href: "/category/home-kitchen",
-    icon: HomeIcon,
-    tint: "bg-brand-700",
-  },
-  {
-    label: "Beauty",
-    href: "/category/beauty",
-    icon: Sparkles,
-    tint: "bg-secondary-600",
-  },
-  {
-    label: "Sports & Outdoors",
-    href: "/category/sports-outdoors",
-    icon: Dumbbell,
-    tint: "bg-brand-600",
-  },
-  {
-    label: "Books",
-    href: "/category/books",
-    icon: BookOpen,
-    tint: "bg-accent-700",
-  },
-];
+import { CATEGORIES } from "@/features/products/lib/categories";
 
 const TRUST_BADGES = [
   {
@@ -93,21 +44,21 @@ export default function Home() {
               Shop everything, in one place.
             </h1>
             <p className="mt-4 max-w-lg text-lg text-zinc-300">
-              Millions of products, unbeatable prices, delivered fast. Create an
-              account to track orders, save favorites, and check out in seconds.
+              Thousands of products, unbeatable prices, delivered fast. Browse
+              the catalog, add to cart, and check out in seconds.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/signup">
+              <Link href="/category/electronics">
                 <Button variant="primary" className="h-12 px-7 text-base">
-                  Create an account
+                  Start shopping
                 </Button>
               </Link>
-              <Link href="/login">
+              <Link href="/signup">
                 <Button
                   variant="secondary-on-dark"
                   className="h-12 px-7 text-base"
                 >
-                  Sign in
+                  Create an account
                 </Button>
               </Link>
             </div>
@@ -117,7 +68,7 @@ export default function Home() {
             aria-hidden="true"
             className="grid w-full max-w-md grid-cols-3 gap-3 lg:w-auto"
           >
-            {CATEGORIES.slice(0, 6).map(({ label, icon: Icon, tint }) => (
+            {CATEGORIES.map(({ label, icon: Icon, tint }) => (
               <div
                 key={label}
                 className={`flex h-24 w-24 flex-col items-center justify-center gap-1.5 rounded-lg ${tint} text-white shadow-lg sm:h-28 sm:w-28`}
@@ -137,10 +88,10 @@ export default function Home() {
           </h2>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {CATEGORIES.map(({ label, href, icon: Icon, tint }) => (
+          {CATEGORIES.map(({ label, slug, icon: Icon, tint }) => (
             <Link
-              key={href}
-              href={href}
+              key={slug}
+              href={`/category/${slug}`}
               className="group border-surface-border focus-visible:outline-brand-500 flex flex-col items-center gap-3 rounded-lg border bg-white p-5 text-center shadow-sm transition-shadow hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <span
@@ -168,32 +119,32 @@ export default function Home() {
                 Top-rated picks, all in one spot.
               </h3>
               <p className="mt-2 text-sm text-white/80">
-                Curated by real customer ratings — coming soon.
+                Curated by real customer ratings.
               </p>
             </div>
-            <Button
-              variant="secondary-on-dark"
-              disabled
-              className="w-fit border-white/60 text-white"
-            >
-              Browse best sellers
-            </Button>
+            <Link href="/category/electronics">
+              <Button variant="secondary-on-dark" className="w-fit">
+                Browse best sellers
+              </Button>
+            </Link>
           </div>
           <div className="from-brand-800 to-brand-950 flex flex-col justify-between gap-6 rounded-lg bg-gradient-to-br p-8 text-white">
             <div>
               <span className="text-accent-400 text-xs font-bold tracking-wide uppercase">
-                Limited time
+                New arrivals
               </span>
               <h3 className="mt-2 text-2xl font-extrabold">
-                Today&apos;s deals, up to 40% off.
+                Just landed across every category.
               </h3>
               <p className="mt-2 text-sm text-white/80">
-                Deals refresh daily — coming soon.
+                Fresh picks, added regularly.
               </p>
             </div>
-            <Button variant="primary" disabled className="w-fit">
-              See today&apos;s deals
-            </Button>
+            <Link href="/category/books">
+              <Button variant="primary" className="w-fit">
+                See what&apos;s new
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

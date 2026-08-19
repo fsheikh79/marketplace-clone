@@ -25,6 +25,19 @@ calls later is a drop-in change, not a rewrite.
 Every point where a mock stands in for a future real API call is marked with
 a `// MOCK: ...` comment.
 
+## Sub-phase 1b — product catalog, cart, checkout
+
+- Mock product catalog (30 products across 6 categories) with generated
+  SVG placeholder art — no external image hosting dependency
+- Product listing (`/category/[slug]`) and detail (`/product/[slug]`) pages,
+  statically generated
+- Cart: `localStorage`-persisted `useCart()` context (`addItem`,
+  `removeItem`, `updateQuantity`, `clearCart`, `totalItems`, `subtotal`),
+  live badge count in the header
+- Checkout: validated shipping-address form, guest or signed-in, creates a
+  mock order and redirects to an order confirmation page
+- Homepage and header category links now point at real listing pages
+
 ## Getting started
 
 ```bash
@@ -42,16 +55,19 @@ npm run build   # Production build + type check
 ## Project structure
 
 ```
-/app                — routes (App Router)
-/components/ui       — generic UI primitives (Button, Input)
-/components/layout   — Header, Footer, AccountMenu
-/features/auth       — auth context, forms, validation, mock user store
-/types                — shared domain types (User, Product, CartItem, Order, Review)
-/.env.example         — placeholder vars for future AWS config (Cognito, API Gateway, Stripe)
+/app                  — routes (App Router)
+/components/ui        — generic UI primitives (Button, Input)
+/components/layout    — Header, Footer, AccountMenu, CartButton
+/features/auth        — auth context, forms, validation, mock user store
+/features/products    — categories, mock catalog, product cards/grid
+/features/cart         — cart context, cart UI
+/features/checkout    — shipping form + validation
+/features/orders      — mock order store
+/types                 — shared domain types (User, Product, CartItem, Order, Review)
+/.env.example          — placeholder vars for future AWS config (Cognito, API Gateway, Stripe)
 ```
 
 ## Roadmap
 
-- **1b** — product listing, cart, checkout (still mocked)
 - **Phase 2** — wire up real AWS services (Cognito, API Gateway, Lambda,
-  DynamoDB)
+  DynamoDB, Stripe)

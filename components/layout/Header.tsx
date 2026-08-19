@@ -1,19 +1,15 @@
 import Link from "next/link";
-import { Search, ShoppingCart } from "lucide-react";
+import { Search } from "lucide-react";
 import { AccountMenu } from "@/components/layout/AccountMenu";
-
-// MOCK: cart count is a static placeholder; wire up to the real cart
-// feature (sub-phase 1b) when it lands.
-const MOCK_CART_ITEM_COUNT = 0;
+import { CartButton } from "@/components/layout/CartButton";
+import { CATEGORIES } from "@/features/products/lib/categories";
 
 const CATEGORY_LINKS = [
   { label: "Today's Deals", href: "/deals" },
-  { label: "Electronics", href: "/category/electronics" },
-  { label: "Fashion", href: "/category/fashion" },
-  { label: "Home & Kitchen", href: "/category/home-kitchen" },
-  { label: "Beauty", href: "/category/beauty" },
-  { label: "Sports & Outdoors", href: "/category/sports-outdoors" },
-  { label: "Books", href: "/category/books" },
+  ...CATEGORIES.map((category) => ({
+    label: category.label,
+    href: `/category/${category.slug}`,
+  })),
 ];
 
 export function Header() {
@@ -54,19 +50,7 @@ export function Header() {
 
         <div className="order-2 ml-auto flex items-center gap-1 sm:order-3 sm:ml-0">
           <AccountMenu />
-          <button
-            type="button"
-            disabled
-            className="relative flex h-11 w-11 items-center justify-center rounded-md text-white disabled:cursor-not-allowed disabled:opacity-70"
-            aria-label={`Cart, ${MOCK_CART_ITEM_COUNT} items (coming soon)`}
-          >
-            <ShoppingCart className="h-6 w-6" aria-hidden="true" />
-            {MOCK_CART_ITEM_COUNT > 0 && (
-              <span className="bg-accent-500 text-brand-950 absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold">
-                {MOCK_CART_ITEM_COUNT}
-              </span>
-            )}
-          </button>
+          <CartButton />
         </div>
       </div>
 
