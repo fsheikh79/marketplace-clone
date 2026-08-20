@@ -136,6 +136,43 @@ a `// MOCK: ...` comment.
   storefront — product grid, product detail, cart, search, order history —
   and the admin dashboard, product list, and order list
 
+## Polish pass — animation, motion, and small details
+
+Built with Framer Motion, scoped to the storefront only (the admin panel
+stays instant/functional, no scroll or page-transition animation):
+
+- Scroll-triggered fade/slide-up on product grids, the homepage category
+  grid, and promo blocks, staggered so cards appear one after another
+- Product card hover: lift (-4px) + shadow, image zoom (clipped so it
+  never breaks the card's layout)
+- Hero banner carousel: 5 auto-advancing promotional slides (crossfade,
+  5s interval, pauses on hover), manual arrows + dot indicators
+- Three homepage horizontal product carousels — "Today's Deals" (on-sale
+  items), "Trending Now" (highest review count), "Recommended for You"
+  (highest-rated, excluding Trending) — with hover-revealed scroll arrows
+- Page fade transition between routes, scoped to `(shop)` via
+  `template.tsx` (Next.js remounts it on every navigation)
+- Slide-in cart drawer from the right on add-to-cart, with a backdrop and
+  its own mini order summary + checkout shortcut
+- Micro-interactions: wishlist heart pulse, cart icon bounce on add,
+  button press feedback, toast notifications repositioned top-right with
+  a slide-in animation and 3s auto-dismiss
+- Order IDs changed from raw UUIDs to a realistic `ORD-YYYYMMDD-NNN`
+  format, used consistently everywhere an order is displayed
+- Product badges (New / Best Seller / Sale -20% / Limited Stock),
+  computed deterministically from existing product data — no new
+  promotions schema. Sale badges show a strikethrough compare-at price;
+  the discount is presentational only and doesn't change checkout math
+- Empty states standardized across cart, wishlist, search, order history,
+  and product grids (icon + message + call-to-action)
+- Footer: newsletter email capture (mock submission), payment-method and
+  social-link marks (lucide-react dropped brand icons, so these are text
+  marks rather than trademarked logos — see the code comment)
+- Fixed a real mobile bug found during this pass: horizontal product
+  carousels (`overflow-x-auto`) were bleeding their scroll width into the
+  page itself on mobile, making the whole page scroll sideways. Fixed
+  with `overflow-x: hidden` on `html`/`body` in `globals.css`.
+
 ## Getting started
 
 ```bash

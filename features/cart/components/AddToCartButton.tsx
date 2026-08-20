@@ -5,11 +5,9 @@ import { Minus, Plus } from "lucide-react";
 import type { Product } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { useCart } from "@/features/cart/context/CartContext";
-import { useToast } from "@/features/toast/context/ToastContext";
 
 export function AddToCartButton({ product }: { product: Product }) {
-  const { addItem } = useCart();
-  const { showToast } = useToast();
+  const { addItem, openDrawer } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const outOfStock = product.stock === 0;
@@ -20,7 +18,7 @@ export function AddToCartButton({ product }: { product: Product }) {
     // the disabled/loading state is meaningful rather than instantaneous.
     window.setTimeout(() => {
       addItem(product, quantity);
-      showToast(`Added ${quantity} × ${product.title} to your cart`);
+      openDrawer();
       setIsAdding(false);
     }, 400);
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useWishlist } from "@/features/wishlist/context/WishlistContext";
 import { useAuth } from "@/features/auth/context/AuthContext";
@@ -41,10 +42,20 @@ export function WishlistButton({
       aria-label={saved ? "Remove from wishlist" : "Save to wishlist"}
       className={baseClasses}
     >
-      <Heart
-        className={`h-5 w-5 ${saved ? "text-red-500" : "text-zinc-500"}`}
-        fill={saved ? "currentColor" : "none"}
-      />
+      <AnimatePresence initial={false} mode="popLayout">
+        <motion.span
+          key={saved ? "saved" : "unsaved"}
+          initial={{ scale: 0.6 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 500, damping: 15 }}
+          className="flex"
+        >
+          <Heart
+            className={`h-5 w-5 ${saved ? "text-red-500" : "text-zinc-500"}`}
+            fill={saved ? "currentColor" : "none"}
+          />
+        </motion.span>
+      </AnimatePresence>
     </button>
   );
 }

@@ -112,7 +112,7 @@ export default function OrderHistoryPage() {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-brand-950 text-sm font-bold">
-                    Order #{order.id.slice(0, 8)}
+                    Order #{order.id}
                   </p>
                   <p className="text-xs text-zinc-500">
                     {new Date(order.createdAt).toLocaleDateString("en-US", {

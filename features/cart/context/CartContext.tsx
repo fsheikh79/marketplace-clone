@@ -27,6 +27,9 @@ export interface CartContextValue {
   clearCart: () => void;
   totalItems: number;
   subtotal: number;
+  isDrawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -45,6 +48,9 @@ function readCart(): CartItem[] {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
+  const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
 
   useEffect(() => {
     // Syncing from localStorage (an external system) on mount, not derived
@@ -138,6 +144,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clearCart,
       totalItems,
       subtotal,
+      isDrawerOpen,
+      openDrawer,
+      closeDrawer,
     }),
     [
       items,
@@ -148,6 +157,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clearCart,
       totalItems,
       subtotal,
+      isDrawerOpen,
+      openDrawer,
+      closeDrawer,
     ],
   );
 

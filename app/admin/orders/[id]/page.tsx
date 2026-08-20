@@ -63,7 +63,7 @@ export default function AdminOrderDetailPage({
 
   return (
     <>
-      <AdminPageHeader title={`Order #${order.id.slice(0, 8)}`} />
+      <AdminPageHeader title={`Order #${order.id}`} />
       <div className="flex-1 p-6">
         <Link
           href="/admin/orders"

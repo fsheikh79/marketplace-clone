@@ -1,11 +1,18 @@
-import { type ButtonHTMLAttributes, forwardRef } from "react";
+"use client";
+
+import { type ReactNode, forwardRef } from "react";
+import { motion, type HTMLMotionProps } from "framer-motion";
 
 type Variant =
   "primary" | "secondary" | "secondary-on-dark" | "ghost" | "danger";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<
+  HTMLMotionProps<"button">,
+  "ref" | "children"
+> {
   variant?: Variant;
   isLoading?: boolean;
+  children?: ReactNode;
 }
 
 // One accent color, one hierarchy: primary is the only filled/CTA style,
@@ -40,9 +47,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     return (
-      <button
+      <motion.button
         ref={ref}
         disabled={disabled || isLoading}
+        whileTap={disabled || isLoading ? undefined : { scale: 0.97 }}
         className={`inline-flex h-11 items-center justify-center gap-2 rounded-md px-5 text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
         {...props}
       >
@@ -53,7 +61,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           />
         )}
         {children}
-      </button>
+      </motion.button>
     );
   },
 );

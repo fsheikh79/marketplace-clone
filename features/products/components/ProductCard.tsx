@@ -1,14 +1,21 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Eye } from "lucide-react";
 import type { Product } from "@/types";
 import { StarRating } from "@/features/products/components/StarRating";
 import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
+import { ProductBadges } from "@/features/products/components/ProductBadges";
+import { getProductBadges } from "@/features/products/lib/productBadges";
 import { formatPrice } from "@/lib/format";
 import {
   getStockLevel,
   getStockLabel,
   getStockColorClass,
 } from "@/features/products/lib/stockStatus";
+
+const MotionLink = motion.create(Link);
 
 export function ProductCard({
   product,
@@ -18,19 +25,23 @@ export function ProductCard({
   onQuickView?: (product: Product) => void;
 }) {
   const stockLevel = getStockLevel(product.stock);
+  const badges = getProductBadges(product);
 
   return (
-    <Link
+    <MotionLink
       href={`/product/${product.slug}`}
-      className="group border-surface-border focus-visible:outline-brand-500 flex flex-col overflow-hidden rounded-lg border bg-white transition-shadow hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="group border-surface-border focus-visible:outline-brand-500 flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
     >
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element -- hotlinked external photo, not a local optimizable asset */}
         <img
           src={product.images[0]?.url}
           alt={product.images[0]?.alt ?? product.title}
-          className="bg-surface-muted aspect-square w-full object-cover transition-transform group-hover:scale-105"
+          className="bg-surface-muted aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
+        <ProductBadges product={product} />
         <WishlistButton productId={product.id} />
         {onQuickView && (
           <button
@@ -62,10 +73,17 @@ export function ProductCard({
             {getStockLabel(product.stock)}
           </p>
         )}
-        <p className="text-brand-950 mt-auto pt-2 text-lg font-bold">
-          {formatPrice(product.price, product.currency)}
+        <p className="mt-auto flex items-baseline gap-2 pt-2">
+          <span className="text-brand-950 text-lg font-bold">
+            {formatPrice(product.price, product.currency)}
+          </span>
+          {badges.isOnSale && (
+            <span className="text-sm text-zinc-400 line-through">
+              {formatPrice(badges.compareAtPrice, product.currency)}
+            </span>
+          )}
         </p>
       </div>
-    </Link>
+    </MotionLink>
   );
 }

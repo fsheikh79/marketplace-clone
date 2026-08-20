@@ -67,7 +67,7 @@ export default function AdminOrdersPage() {
     // MOCK: instant local status update. Replace with an API Gateway/
     // Lambda PATCH to DynamoDB in Phase 2.
     updateOrderStatus(order.id, status);
-    showToast(`Order #${order.id.slice(0, 8)} marked ${status}`);
+    showToast(`Order #${order.id} marked ${status}`);
     refresh();
   }
 
@@ -113,7 +113,7 @@ export default function AdminOrdersPage() {
                 {filtered.map((order) => (
                   <tr key={order.id}>
                     <td className="px-4 py-3 font-mono text-xs text-zinc-500">
-                      #{order.id.slice(0, 8)}
+                      #{order.id}
                     </td>
                     <td className="px-4 py-3 text-zinc-900">
                       {order.shippingAddress.fullName}

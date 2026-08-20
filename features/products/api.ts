@@ -4,6 +4,7 @@ import {
   findProductBySlug,
   findProductById,
 } from "@/features/products/lib/productStore";
+import { getProductBadges } from "@/features/products/lib/productBadges";
 
 /**
  * Mock product API. Every call here returns a Promise and takes the same
@@ -121,6 +122,37 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
     .map((id) => findProductById(id))
     .filter((product): product is Product => Boolean(product));
   return delay(products);
+}
+
+// MOCK: homepage carousel sections, derived from the existing catalog
+// (sale flag / review count / rating) rather than a real recommendation
+// or promotions engine. Replace with real merchandising/recommendation
+// endpoints in Phase 2.
+export async function getDealsProducts(limit = 10): Promise<Product[]> {
+  const items = listProducts().filter(
+    (product) => getProductBadges(product).isOnSale,
+  );
+  return delay(items.slice(0, limit));
+}
+
+export async function getTrendingProducts(limit = 10): Promise<Product[]> {
+  const items = [...listProducts()].sort(
+    (a, b) => b.reviewCount - a.reviewCount,
+  );
+  return delay(items.slice(0, limit));
+}
+
+export async function getRecommendedProducts(limit = 10): Promise<Product[]> {
+  const trendingIds = new Set(
+    [...listProducts()]
+      .sort((a, b) => b.reviewCount - a.reviewCount)
+      .slice(0, limit)
+      .map((p) => p.id),
+  );
+  const items = listProducts()
+    .filter((product) => product.rating >= 4.5 && !trendingIds.has(product.id))
+    .sort((a, b) => b.rating - a.rating);
+  return delay(items.slice(0, limit));
 }
 
 export async function searchProducts(query: string): Promise<Product[]> {

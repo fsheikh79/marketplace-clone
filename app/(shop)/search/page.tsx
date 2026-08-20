@@ -1,12 +1,15 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { SearchX } from "lucide-react";
 import type { Product } from "@/types";
 import { searchProducts } from "@/features/products/api";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { ProductGridSkeleton } from "@/features/products/components/ProductCardSkeleton";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { Button } from "@/components/ui/Button";
 
 export default function SearchPage() {
   return (
@@ -55,10 +58,14 @@ function SearchResults() {
       ) : results === null ? (
         <ProductGridSkeleton count={4} />
       ) : results.length === 0 ? (
-        <div className="border-surface-border rounded-lg border bg-white py-16 text-center">
+        <div className="border-surface-border flex flex-col items-center gap-3 rounded-lg border bg-white py-16 text-center">
+          <SearchX className="h-10 w-10 text-zinc-300" aria-hidden="true" />
           <p className="text-sm text-zinc-600">
             No products match &ldquo;{q}&rdquo;. Try a different search term.
           </p>
+          <Link href="/products">
+            <Button variant="primary">Browse all products</Button>
+          </Link>
         </div>
       ) : (
         <ProductGrid products={results} />

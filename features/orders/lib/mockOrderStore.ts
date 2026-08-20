@@ -1,5 +1,6 @@
 import type { CartItem, Order, OrderStatus } from "@/types";
 import type { ShippingFormValues } from "@/features/checkout/lib/validation";
+import { generateOrderId } from "@/features/orders/lib/orderId";
 
 // MOCK: orders persisted to localStorage, seeded with a handful of
 // realistic historical orders so the admin table isn't empty on first
@@ -10,7 +11,7 @@ const ORDERS_KEY = "marketplace:mock-orders";
 
 const SEED_ORDERS: Order[] = [
   {
-    id: "seed-order-1",
+    id: generateOrderId(new Date("2026-01-15T14:22:00.000Z"), 1),
     userId: null,
     items: [
       {
@@ -38,7 +39,7 @@ const SEED_ORDERS: Order[] = [
     },
   },
   {
-    id: "seed-order-2",
+    id: generateOrderId(new Date("2026-02-03T09:10:00.000Z"), 1),
     userId: null,
     items: [
       {
@@ -72,7 +73,7 @@ const SEED_ORDERS: Order[] = [
     },
   },
   {
-    id: "seed-order-3",
+    id: generateOrderId(new Date("2026-02-20T18:45:00.000Z"), 1),
     userId: null,
     items: [
       {
@@ -100,7 +101,7 @@ const SEED_ORDERS: Order[] = [
     },
   },
   {
-    id: "seed-order-4",
+    id: generateOrderId(new Date("2026-03-01T11:05:00.000Z"), 1),
     userId: null,
     items: [
       {
@@ -134,7 +135,7 @@ const SEED_ORDERS: Order[] = [
     },
   },
   {
-    id: "seed-order-5",
+    id: generateOrderId(new Date("2026-01-28T16:30:00.000Z"), 1),
     userId: null,
     items: [
       {
@@ -198,8 +199,13 @@ export function createOrder(
   );
   const total = subtotal + pricing.deliveryFee - pricing.discountAmount;
 
+  const now = new Date();
+  const ordersToday = readOrders().filter(
+    (order) => order.createdAt.slice(0, 10) === now.toISOString().slice(0, 10),
+  ).length;
+
   const order: Order = {
-    id: crypto.randomUUID(),
+    id: generateOrderId(now, ordersToday + 1),
     userId,
     items: items.map((item) => ({
       productId: item.productId,
@@ -214,7 +220,7 @@ export function createOrder(
     total,
     currency: "USD",
     status: "processing",
-    createdAt: new Date().toISOString(),
+    createdAt: now.toISOString(),
     shippingAddress: {
       fullName: shipping.fullName,
       line1: shipping.line1,

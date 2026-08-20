@@ -7,7 +7,6 @@ import type { Product } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { StarRating } from "@/features/products/components/StarRating";
 import { useCart } from "@/features/cart/context/CartContext";
-import { useToast } from "@/features/toast/context/ToastContext";
 import { formatPrice } from "@/lib/format";
 import {
   getStockLabel,
@@ -21,15 +20,14 @@ export function QuickViewModal({
   product: Product;
   onClose: () => void;
 }) {
-  const { addItem } = useCart();
-  const { showToast } = useToast();
+  const { addItem, openDrawer } = useCart();
   const [quantity, setQuantity] = useState(1);
   const outOfStock = product.stock === 0;
 
   function handleAdd() {
     addItem(product, quantity);
-    showToast(`Added ${quantity} × ${product.title} to your cart`);
     onClose();
+    openDrawer();
   }
 
   return (
