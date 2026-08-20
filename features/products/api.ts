@@ -14,9 +14,10 @@ import {
  * dashboard writes to.
  */
 
-// MOCK: small artificial latency so loading states are actually observable
-// in the UI, standing in for real network latency.
-const MOCK_LATENCY_MS = 350;
+// DEMO: artificial delay to showcase skeleton loading — remove in
+// production. Also stands in for real network latency once this becomes a
+// real API call.
+const MOCK_LATENCY_MS = 300;
 
 function delay<T>(value: T): Promise<T> {
   return new Promise((resolve) => {

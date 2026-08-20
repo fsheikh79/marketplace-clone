@@ -58,6 +58,10 @@ export interface Order {
   id: string;
   userId: string | null;
   items: OrderItem[];
+  subtotal: number;
+  deliveryFee: number;
+  discountCode?: string;
+  discountAmount: number;
   total: number;
   currency: string;
   status: OrderStatus;

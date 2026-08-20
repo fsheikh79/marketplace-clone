@@ -12,6 +12,7 @@ import { AdminPageHeader } from "@/features/admin/components/AdminPageHeader";
 import { OrderStatusBadge } from "@/features/orders/components/OrderStatusBadge";
 import { useToast } from "@/features/toast/context/ToastContext";
 import { formatPrice } from "@/lib/format";
+import { demoDelay } from "@/lib/demoDelay";
 
 const STATUSES: OrderStatus[] = [
   "pending",
@@ -20,6 +21,19 @@ const STATUSES: OrderStatus[] = [
   "delivered",
   "cancelled",
 ];
+
+function AdminTableSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      {Array.from({ length: 6 }, (_, index) => (
+        <div
+          key={index}
+          className="h-14 animate-pulse border-b border-zinc-100 bg-zinc-50 last:border-b-0"
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function AdminOrdersPage() {
   const { showToast } = useToast();
@@ -31,10 +45,15 @@ export default function AdminOrdersPage() {
   }
 
   useEffect(() => {
-    // Syncing from the mock order store on mount, not derived render
-    // state.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    refresh();
+    let cancelled = false;
+    // DEMO: artificial delay to showcase skeleton loading — remove in
+    // production. This read is otherwise instant (localStorage).
+    demoDelay().then(() => {
+      if (!cancelled) refresh();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = useMemo(() => {
@@ -75,83 +94,87 @@ export default function AdminOrdersPage() {
           </select>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
-          <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
-              <tr>
-                <th className="px-4 py-3">Order</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3">Total</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {filtered.map((order) => (
-                <tr key={order.id}>
-                  <td className="px-4 py-3 font-mono text-xs text-zinc-500">
-                    #{order.id.slice(0, 8)}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-900">
-                    {order.shippingAddress.fullName}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">
-                    {new Date(order.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">
-                    {formatPrice(order.total, order.currency)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <OrderStatusBadge status={order.status} />
-                      <select
-                        aria-label={`Update status for order ${order.id}`}
-                        value={order.status}
-                        onChange={(e) =>
-                          handleStatusChange(
-                            order,
-                            e.target.value as OrderStatus,
-                          )
-                        }
-                        className="h-8 rounded-md border border-zinc-300 px-2 text-xs text-zinc-700 outline-none focus:ring-2 focus:ring-zinc-500"
-                      >
-                        {STATUSES.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/admin/orders/${order.id}`}
-                      aria-label={`View order ${order.id}`}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-              {orders !== null && filtered.length === 0 && (
+        {orders === null ? (
+          <AdminTableSkeleton />
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
                 <tr>
-                  <td
-                    colSpan={6}
-                    className="px-4 py-10 text-center text-zinc-500"
-                  >
-                    No orders match this filter.
-                  </td>
+                  <th className="px-4 py-3">Order</th>
+                  <th className="px-4 py-3">Customer</th>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Total</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {filtered.map((order) => (
+                  <tr key={order.id}>
+                    <td className="px-4 py-3 font-mono text-xs text-zinc-500">
+                      #{order.id.slice(0, 8)}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-900">
+                      {order.shippingAddress.fullName}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600">
+                      {new Date(order.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600">
+                      {formatPrice(order.total, order.currency)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <OrderStatusBadge status={order.status} />
+                        <select
+                          aria-label={`Update status for order ${order.id}`}
+                          value={order.status}
+                          onChange={(e) =>
+                            handleStatusChange(
+                              order,
+                              e.target.value as OrderStatus,
+                            )
+                          }
+                          className="h-8 rounded-md border border-zinc-300 px-2 text-xs text-zinc-700 outline-none focus:ring-2 focus:ring-zinc-500"
+                        >
+                          {STATUSES.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        aria-label={`View order ${order.id}`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+                {orders !== null && filtered.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-4 py-10 text-center text-zinc-500"
+                    >
+                      No orders match this filter.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </>
   );

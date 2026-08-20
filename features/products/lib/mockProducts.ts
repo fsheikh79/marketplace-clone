@@ -1,6 +1,5 @@
 import type { Product } from "@/types";
-import { getCategoryBySlug } from "@/features/products/lib/categories";
-import { placeholderProductImage } from "@/features/products/lib/placeholderImage";
+import { productImages } from "@/features/products/lib/productPhotos";
 
 // MOCK: static in-memory product catalog. This module is the raw
 // synchronous data source; application code should go through the async
@@ -394,8 +393,6 @@ const PRODUCT_SEEDS: ProductSeed[] = [
 ];
 
 function toProduct(seed: ProductSeed, index: number): Product {
-  const category = getCategoryBySlug(seed.category);
-  const hex = category?.hex ?? "#375883";
   return {
     id: seed.slug,
     slug: seed.slug,
@@ -403,13 +400,7 @@ function toProduct(seed: ProductSeed, index: number): Product {
     description: seed.description,
     price: seed.price,
     currency: "USD",
-    images: [
-      { url: placeholderProductImage(hex, index), alt: seed.title },
-      {
-        url: placeholderProductImage(hex, index + 100),
-        alt: `${seed.title} — alternate view`,
-      },
-    ],
+    images: productImages(seed.slug, seed.title),
     category: seed.category,
     brand: seed.brand,
     rating: seed.rating,

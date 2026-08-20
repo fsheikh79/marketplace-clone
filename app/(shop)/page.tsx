@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Headphones, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { CATEGORIES } from "@/features/products/lib/categories";
+import { RecentlyViewed } from "@/features/products/components/RecentlyViewed";
 
 const TRUST_BADGES = [
   {
@@ -148,6 +149,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <RecentlyViewed />
 
       {/* Trust badges */}
       <section className="border-surface-border bg-surface-muted border-t">

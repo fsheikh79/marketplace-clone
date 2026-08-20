@@ -89,7 +89,32 @@ export default function AdminOrderDetailPage({
                 </li>
               ))}
             </ul>
-            <div className="mt-4 flex justify-between border-t border-zinc-200 pt-4 text-base font-bold text-zinc-900">
+            <div className="mt-4 flex flex-col gap-1.5 border-t border-zinc-200 pt-4 text-sm text-zinc-600">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>{formatPrice(order.subtotal, order.currency)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery</span>
+                <span>
+                  {order.deliveryFee === 0
+                    ? "FREE"
+                    : formatPrice(order.deliveryFee, order.currency)}
+                </span>
+              </div>
+              {order.discountAmount > 0 && (
+                <div className="flex justify-between text-emerald-600">
+                  <span>
+                    Discount{" "}
+                    {order.discountCode ? `(${order.discountCode})` : ""}
+                  </span>
+                  <span>
+                    -{formatPrice(order.discountAmount, order.currency)}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="mt-3 flex justify-between border-t border-zinc-200 pt-4 text-base font-bold text-zinc-900">
               <span>Total</span>
               <span>{formatPrice(order.total, order.currency)}</span>
             </div>

@@ -2,17 +2,26 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { PackageSearch } from "lucide-react";
+import { PackageSearch, Truck } from "lucide-react";
 import type { Product } from "@/types";
 import { getProductBySlug, getRelatedProducts } from "@/features/products/api";
 import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { StarRating } from "@/features/products/components/StarRating";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
+import { ProductImageGallery } from "@/features/products/components/ProductImageGallery";
+import { RecentlyViewed } from "@/features/products/components/RecentlyViewed";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 import { ReviewsSection } from "@/features/reviews/components/ReviewsSection";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/format";
+import {
+  getStockLabel,
+  getStockColorClass,
+} from "@/features/products/lib/stockStatus";
+import { getDeliveryEstimate, getDeliveryFee } from "@/lib/delivery";
+import { trackView } from "@/features/products/lib/recentlyViewedStore";
 
 // Client-rendered (rather than statically generated) so admin edits made
 // through /admin/products — which write to the same localStorage-backed
@@ -38,6 +47,7 @@ export default function ProductPage({
       if (cancelled) return;
       setProduct(found ?? null);
       if (found) {
+        trackView(found.id);
         getRelatedProducts(found).then((items) => {
           if (!cancelled) setRelated(items);
         });
@@ -48,7 +58,22 @@ export default function ProductPage({
     };
   }, [slug]);
 
-  if (product === undefined) return null;
+  if (product === undefined) {
+    return (
+      <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div className="bg-surface-muted aspect-square w-full animate-pulse rounded-lg" />
+          <div className="flex flex-col gap-4">
+            <div className="bg-surface-muted h-4 w-24 animate-pulse rounded" />
+            <div className="bg-surface-muted h-8 w-3/4 animate-pulse rounded" />
+            <div className="bg-surface-muted h-6 w-32 animate-pulse rounded" />
+            <div className="bg-surface-muted h-10 w-28 animate-pulse rounded" />
+            <div className="bg-surface-muted h-20 w-full animate-pulse rounded" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (product === null) {
     return (
@@ -65,50 +90,28 @@ export default function ProductPage({
   }
 
   const category = getCategoryBySlug(product.category);
+  const deliveryEstimate = getDeliveryEstimate();
+  const deliveryFee = getDeliveryFee(product.price);
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8">
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-zinc-500">
-        <Link href="/" className="hover:text-brand-900 hover:underline">
-          Home
-        </Link>
-        {category && (
-          <>
-            {" / "}
-            <Link
-              href={`/products?category=${category.slug}`}
-              className="hover:text-brand-900 hover:underline"
-            >
-              {category.label}
-            </Link>
-          </>
-        )}
-        {" / "}
-        <span className="text-brand-900">{product.title}</span>
-      </nav>
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          ...(category
+            ? [
+                {
+                  label: category.label,
+                  href: `/products?category=${category.slug}`,
+                },
+              ]
+            : []),
+          { label: product.title },
+        ]}
+      />
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <div className="flex flex-col gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element -- generated data-URI placeholder art, not an optimizable remote asset */}
-          <img
-            src={product.images[0]?.url}
-            alt={product.images[0]?.alt ?? product.title}
-            className="bg-surface-muted aspect-square w-full rounded-lg object-cover"
-          />
-          {product.images.length > 1 && (
-            <div className="flex gap-3">
-              {product.images.map((image) => (
-                // eslint-disable-next-line @next/next/no-img-element -- generated data-URI placeholder art
-                <img
-                  key={image.url}
-                  src={image.url}
-                  alt={image.alt}
-                  className="bg-surface-muted h-20 w-20 rounded-md object-cover"
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductImageGallery images={product.images} />
 
         <div className="flex flex-col gap-4">
           <div>
@@ -131,12 +134,24 @@ export default function ProductPage({
           </p>
 
           <p
-            className={`text-sm font-semibold ${product.stock > 0 ? "text-secondary-600" : "text-red-600"}`}
+            className={`text-sm font-semibold ${getStockColorClass(product.stock)}`}
           >
-            {product.stock > 0
-              ? `In stock (${product.stock} available)`
-              : "Out of stock"}
+            {getStockLabel(product.stock)}
           </p>
+
+          <div className="border-surface-border bg-surface-muted flex items-start gap-2 rounded-md border p-3 text-sm text-zinc-600">
+            <Truck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>
+              {deliveryEstimate.label}.{" "}
+              {deliveryFee === 0 ? (
+                <span className="text-secondary-600 font-semibold">
+                  FREE delivery
+                </span>
+              ) : (
+                `Delivery: ${formatPrice(deliveryFee)}`
+              )}
+            </span>
+          </div>
 
           <p className="leading-relaxed text-zinc-700">{product.description}</p>
 
@@ -157,6 +172,8 @@ export default function ProductPage({
           <ProductGrid products={related} />
         </section>
       )}
+
+      <RecentlyViewed excludeId={product.id} />
     </div>
   );
 }

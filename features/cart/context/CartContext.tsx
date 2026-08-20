@@ -21,6 +21,7 @@ const CART_KEY = "marketplace:mock-cart";
 export interface CartContextValue {
   items: CartItem[];
   addItem: (product: Product, quantity?: number) => void;
+  addItems: (items: CartItem[]) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -81,6 +82,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const addItems = useCallback((newItems: CartItem[]) => {
+    setItems((prev) => {
+      const next = [...prev];
+      for (const newItem of newItems) {
+        const existingIndex = next.findIndex(
+          (item) => item.productId === newItem.productId,
+        );
+        if (existingIndex === -1) {
+          next.push(newItem);
+        } else {
+          next[existingIndex] = {
+            ...next[existingIndex],
+            quantity: next[existingIndex].quantity + newItem.quantity,
+          };
+        }
+      }
+      return next;
+    });
+  }, []);
+
   const removeItem = useCallback((productId: string) => {
     setItems((prev) => prev.filter((item) => item.productId !== productId));
   }, []);
@@ -111,6 +132,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     () => ({
       items,
       addItem,
+      addItems,
       removeItem,
       updateQuantity,
       clearCart,
@@ -120,6 +142,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [
       items,
       addItem,
+      addItems,
       removeItem,
       updateQuantity,
       clearCart,

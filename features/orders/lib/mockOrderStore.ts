@@ -20,6 +20,9 @@ const SEED_ORDERS: Order[] = [
         quantity: 1,
       },
     ],
+    subtotal: 149.99,
+    deliveryFee: 0,
+    discountAmount: 0,
     total: 149.99,
     currency: "USD",
     status: "delivered",
@@ -51,6 +54,9 @@ const SEED_ORDERS: Order[] = [
         quantity: 1,
       },
     ],
+    subtotal: 168.99,
+    deliveryFee: 0,
+    discountAmount: 0,
     total: 168.99,
     currency: "USD",
     status: "shipped",
@@ -76,6 +82,9 @@ const SEED_ORDERS: Order[] = [
         quantity: 2,
       },
     ],
+    subtotal: 189.98,
+    deliveryFee: 0,
+    discountAmount: 0,
     total: 189.98,
     currency: "USD",
     status: "processing",
@@ -107,6 +116,9 @@ const SEED_ORDERS: Order[] = [
         quantity: 1,
       },
     ],
+    subtotal: 51.98,
+    deliveryFee: 0,
+    discountAmount: 0,
     total: 51.98,
     currency: "USD",
     status: "pending",
@@ -132,6 +144,9 @@ const SEED_ORDERS: Order[] = [
         quantity: 1,
       },
     ],
+    subtotal: 549.0,
+    deliveryFee: 0,
+    discountAmount: 0,
     total: 549.0,
     currency: "USD",
     status: "cancelled",
@@ -171,11 +186,17 @@ export function createOrder(
   items: CartItem[],
   shipping: ShippingFormValues,
   userId: string | null,
+  pricing: {
+    deliveryFee: number;
+    discountCode?: string;
+    discountAmount: number;
+  },
 ): Order {
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
+  const total = subtotal + pricing.deliveryFee - pricing.discountAmount;
 
   const order: Order = {
     id: crypto.randomUUID(),
@@ -186,6 +207,10 @@ export function createOrder(
       price: item.price,
       quantity: item.quantity,
     })),
+    subtotal,
+    deliveryFee: pricing.deliveryFee,
+    discountCode: pricing.discountCode,
+    discountAmount: pricing.discountAmount,
     total,
     currency: "USD",
     status: "processing",

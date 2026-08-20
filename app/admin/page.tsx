@@ -13,6 +13,7 @@ import { listProducts } from "@/features/products/lib/productStore";
 import { getAllOrders } from "@/features/orders/lib/mockOrderStore";
 import { AdminPageHeader } from "@/features/admin/components/AdminPageHeader";
 import { StatCard } from "@/features/admin/components/StatCard";
+import { demoDelay } from "@/lib/demoDelay";
 
 const STATUS_ICONS: Record<OrderStatus, typeof Clock> = {
   pending: Clock,
@@ -38,22 +39,29 @@ export default function AdminDashboardPage() {
   } | null>(null);
 
   useEffect(() => {
-    const orders = getAllOrders();
-    const byStatus = orders.reduce(
-      (acc, order) => {
-        acc[order.status] = (acc[order.status] ?? 0) + 1;
-        return acc;
-      },
-      {} as Record<OrderStatus, number>,
-    );
-    // Syncing from the mock local data stores on mount, not derived render
-    // state.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStats({
-      totalProducts: listProducts().length,
-      totalOrders: orders.length,
-      byStatus,
+    let cancelled = false;
+    // DEMO: artificial delay to showcase skeleton loading — remove in
+    // production. These reads are otherwise instant (localStorage).
+    demoDelay().then(() => {
+      if (cancelled) return;
+      const orders = getAllOrders();
+      const byStatus = orders.reduce(
+        (acc, order) => {
+          acc[order.status] = (acc[order.status] ?? 0) + 1;
+          return acc;
+        },
+        {} as Record<OrderStatus, number>,
+      );
+
+      setStats({
+        totalProducts: listProducts().length,
+        totalOrders: orders.length,
+        byStatus,
+      });
     });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -63,6 +71,16 @@ export default function AdminDashboardPage() {
         description="At-a-glance overview of the mock catalog and orders."
       />
       <div className="flex-1 p-6">
+        {!stats && (
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div
+                key={index}
+                className="h-[76px] animate-pulse rounded-lg bg-zinc-100"
+              />
+            ))}
+          </div>
+        )}
         {stats && (
           <>
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

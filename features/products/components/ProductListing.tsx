@@ -12,6 +12,8 @@ import { CATEGORIES } from "@/features/products/lib/categories";
 import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { ProductGridSkeleton } from "@/features/products/components/ProductCardSkeleton";
 import { Pagination } from "@/features/products/components/Pagination";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { getCategoryBySlug } from "@/features/products/lib/categories";
 
 const SORT_LABELS: Record<SortOption, string> = {
   newest: "Newest arrivals",
@@ -83,10 +85,20 @@ export function ProductListing() {
     setPage(1);
   }
 
+  const activeCategory = getCategoryBySlug(category);
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          {
+            label: activeCategory ? activeCategory.label : "All Products",
+          },
+        ]}
+      />
       <h1 className="text-brand-950 mb-6 text-2xl font-extrabold tracking-tight">
-        All Products
+        {activeCategory ? activeCategory.label : "All Products"}
       </h1>
 
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">

@@ -1,13 +1,15 @@
 import type { Review } from "@/types";
 import { StarRating } from "@/features/products/components/StarRating";
 
-export function ReviewList({ reviews }: { reviews: Review[] }) {
+export function ReviewList({
+  reviews,
+  emptyMessage = "No reviews yet. Be the first to share your thoughts.",
+}: {
+  reviews: Review[];
+  emptyMessage?: string;
+}) {
   if (reviews.length === 0) {
-    return (
-      <p className="text-sm text-zinc-500">
-        No reviews yet. Be the first to share your thoughts.
-      </p>
-    );
+    return <p className="text-sm text-zinc-500">{emptyMessage}</p>;
   }
 
   return (

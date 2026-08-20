@@ -77,7 +77,29 @@ export default function OrderConfirmationPage({
             </li>
           ))}
         </ul>
-        <div className="border-surface-border text-brand-950 mt-4 flex justify-between border-t pt-4 text-base font-bold">
+        <div className="border-surface-border mt-4 flex flex-col gap-1.5 border-t pt-4 text-sm text-zinc-600">
+          <div className="flex justify-between">
+            <span>Subtotal</span>
+            <span>{formatPrice(order.subtotal, order.currency)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Delivery</span>
+            <span>
+              {order.deliveryFee === 0
+                ? "FREE"
+                : formatPrice(order.deliveryFee, order.currency)}
+            </span>
+          </div>
+          {order.discountAmount > 0 && (
+            <div className="text-secondary-600 flex justify-between">
+              <span>
+                Discount {order.discountCode ? `(${order.discountCode})` : ""}
+              </span>
+              <span>-{formatPrice(order.discountAmount, order.currency)}</span>
+            </div>
+          )}
+        </div>
+        <div className="border-surface-border text-brand-950 mt-3 flex justify-between border-t pt-4 text-base font-bold">
           <span>Total</span>
           <span>{formatPrice(order.total, order.currency)}</span>
         </div>
@@ -105,7 +127,10 @@ export default function OrderConfirmationPage({
         </address>
       </div>
 
-      <div className="mt-8 flex justify-center">
+      <div className="mt-8 flex justify-center gap-3">
+        <Link href={`/orders/${order.id}/track`}>
+          <Button variant="primary">Track order</Button>
+        </Link>
         <Link href="/">
           <Button variant="secondary">Continue shopping</Button>
         </Link>

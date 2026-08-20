@@ -1,7 +1,6 @@
 import type { Product } from "@/types";
 import { getAllProducts as getSeedProducts } from "@/features/products/lib/mockProducts";
-import { getCategoryBySlug } from "@/features/products/lib/categories";
-import { placeholderProductImage } from "@/features/products/lib/placeholderImage";
+import { productImages } from "@/features/products/lib/productPhotos";
 
 // MOCK: the mutable product catalog, persisted to localStorage and seeded
 // from the static catalog on first read. This is the single source of
@@ -75,8 +74,6 @@ export interface ProductInput {
 export function createProduct(input: ProductInput): Product {
   const products = readProducts();
   const slug = uniqueSlug(slugify(input.title), products);
-  const hex = getCategoryBySlug(input.category)?.hex ?? "#375883";
-  const seedIndex = products.length + Date.now();
 
   const product: Product = {
     id: slug,
@@ -85,9 +82,7 @@ export function createProduct(input: ProductInput): Product {
     description: input.description,
     price: input.price,
     currency: "USD",
-    images: [
-      { url: placeholderProductImage(hex, seedIndex), alt: input.title },
-    ],
+    images: productImages(slug, input.title),
     category: input.category,
     brand: input.brand,
     rating: 0,

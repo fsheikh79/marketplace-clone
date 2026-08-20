@@ -14,6 +14,20 @@ import { ConfirmDialog } from "@/features/admin/components/ConfirmDialog";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/features/toast/context/ToastContext";
 import { formatPrice } from "@/lib/format";
+import { demoDelay } from "@/lib/demoDelay";
+
+function AdminTableSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      {Array.from({ length: 6 }, (_, index) => (
+        <div
+          key={index}
+          className="h-14 animate-pulse border-b border-zinc-100 bg-zinc-50 last:border-b-0"
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function AdminProductsPage() {
   const { showToast } = useToast();
@@ -27,10 +41,15 @@ export default function AdminProductsPage() {
   }
 
   useEffect(() => {
-    // Syncing from the shared mock product store on mount, not derived
-    // render state.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    refresh();
+    let cancelled = false;
+    // DEMO: artificial delay to showcase skeleton loading — remove in
+    // production. This read is otherwise instant (localStorage).
+    demoDelay().then(() => {
+      if (!cancelled) refresh();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = useMemo(() => {
@@ -94,74 +113,78 @@ export default function AdminProductsPage() {
           </select>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
-              <tr>
-                <th className="px-4 py-3">Product</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Price</th>
-                <th className="px-4 py-3">Stock</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {filtered.map((product) => (
-                <tr key={product.id}>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- generated data-URI placeholder art */}
-                      <img
-                        src={product.images[0]?.url}
-                        alt=""
-                        className="h-10 w-10 shrink-0 rounded bg-zinc-100 object-cover"
-                      />
-                      <span className="font-medium text-zinc-900">
-                        {product.title}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600 capitalize">
-                    {product.category.replace("-", " ")}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">
-                    {formatPrice(product.price, product.currency)}
-                  </td>
-                  <td className="px-4 py-3 text-zinc-600">{product.stock}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      <Link
-                        href={`/admin/products/${product.id}/edit`}
-                        aria-label={`Edit ${product.title}`}
-                        className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                      <button
-                        type="button"
-                        aria-label={`Delete ${product.title}`}
-                        onClick={() => setPendingDelete(product)}
-                        className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-red-50 hover:text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {products !== null && filtered.length === 0 && (
+        {products === null ? (
+          <AdminTableSkeleton />
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="border-b border-zinc-200 bg-zinc-50 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-4 py-10 text-center text-zinc-500"
-                  >
-                    No products match your search.
-                  </td>
+                  <th className="px-4 py-3">Product</th>
+                  <th className="px-4 py-3">Category</th>
+                  <th className="px-4 py-3">Price</th>
+                  <th className="px-4 py-3">Stock</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {filtered.map((product) => (
+                  <tr key={product.id}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element -- generated data-URI placeholder art */}
+                        <img
+                          src={product.images[0]?.url}
+                          alt=""
+                          className="h-10 w-10 shrink-0 rounded bg-zinc-100 object-cover"
+                        />
+                        <span className="font-medium text-zinc-900">
+                          {product.title}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600 capitalize">
+                      {product.category.replace("-", " ")}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600">
+                      {formatPrice(product.price, product.currency)}
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600">{product.stock}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          href={`/admin/products/${product.id}/edit`}
+                          aria-label={`Edit ${product.title}`}
+                          className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                        <button
+                          type="button"
+                          aria-label={`Delete ${product.title}`}
+                          onClick={() => setPendingDelete(product)}
+                          className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-red-50 hover:text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {products !== null && filtered.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="px-4 py-10 text-center text-zinc-500"
+                    >
+                      No products match your search.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <ConfirmDialog
