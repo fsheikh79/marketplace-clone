@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+"use client";
+
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { getAllProducts } from "@/features/products/lib/mockProducts";
+import { PackageSearch } from "lucide-react";
+import type { Product } from "@/types";
 import { getProductBySlug, getRelatedProducts } from "@/features/products/api";
 import { getCategoryBySlug } from "@/features/products/lib/categories";
 import { StarRating } from "@/features/products/components/StarRating";
@@ -9,35 +11,60 @@ import { ProductGrid } from "@/features/products/components/ProductGrid";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 import { ReviewsSection } from "@/features/reviews/components/ReviewsSection";
+import { Button } from "@/components/ui/Button";
 import { formatPrice } from "@/lib/format";
 
-export function generateStaticParams() {
-  return getAllProducts().map((product) => ({ slug: product.slug }));
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
-  return {
-    title: product ? `${product.title} — marketplace` : "Product not found",
-  };
-}
-
-export default async function ProductPage({
+// Client-rendered (rather than statically generated) so admin edits made
+// through /admin/products — which write to the same localStorage-backed
+// product store — show up here immediately in the same browser session.
+// This trades away per-product static generation/metadata, an acceptable
+// cost given the whole catalog is mock/local-state for now.
+export default function ProductPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
-  if (!product) notFound();
+  const { slug } = use(params);
+  const [product, setProduct] = useState<Product | null | undefined>(undefined);
+  const [related, setRelated] = useState<Product[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    // Syncing from the mock product API (an external, async data source),
+    // not derived render state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProduct(undefined);
+    getProductBySlug(slug).then((found) => {
+      if (cancelled) return;
+      setProduct(found ?? null);
+      if (found) {
+        getRelatedProducts(found).then((items) => {
+          if (!cancelled) setRelated(items);
+        });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  if (product === undefined) return null;
+
+  if (product === null) {
+    return (
+      <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col items-center justify-center gap-4 px-4 py-24 text-center">
+        <PackageSearch className="h-10 w-10 text-zinc-300" aria-hidden="true" />
+        <h1 className="text-brand-950 text-2xl font-extrabold">
+          Product not found
+        </h1>
+        <Link href="/products">
+          <Button variant="primary">Back to all products</Button>
+        </Link>
+      </div>
+    );
+  }
 
   const category = getCategoryBySlug(product.category);
-  const related = await getRelatedProducts(product);
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8">

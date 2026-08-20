@@ -10,6 +10,18 @@ interface StoredUser extends User {
   password: string;
 }
 
+// MOCK: a seeded demo admin account so /admin can be exercised without
+// building an account-role-assignment UI, which is out of scope. Replace
+// with real Cognito user-group/role claims in Phase 2.
+const SEED_ADMIN: StoredUser = {
+  id: "seed-admin-1",
+  name: "Admin",
+  email: "admin@marketplace.com",
+  password: "admin123",
+  role: "admin",
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
 function isBrowser() {
   return typeof window !== "undefined";
 }
@@ -17,7 +29,10 @@ function isBrowser() {
 function readUsers(): StoredUser[] {
   if (!isBrowser()) return [];
   const raw = window.localStorage.getItem(USERS_KEY);
-  if (!raw) return [];
+  if (!raw) {
+    window.localStorage.setItem(USERS_KEY, JSON.stringify([SEED_ADMIN]));
+    return [SEED_ADMIN];
+  }
   try {
     return JSON.parse(raw) as StoredUser[];
   } catch {
@@ -50,6 +65,7 @@ function toPublicUser(user: StoredUser): User {
     name: user.name,
     email: user.email,
     avatarUrl: user.avatarUrl,
+    role: user.role,
     createdAt: user.createdAt,
   };
 }
@@ -75,6 +91,7 @@ export function mockSignUp(
     name,
     email,
     password,
+    role: "customer",
     createdAt: new Date().toISOString(),
   };
   writeUsers([...users, newUser]);

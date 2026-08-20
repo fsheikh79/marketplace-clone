@@ -421,25 +421,8 @@ function toProduct(seed: ProductSeed, index: number): Product {
 
 const ALL_PRODUCTS: Product[] = PRODUCT_SEEDS.map(toProduct);
 
+// Only the seed accessor is exported — everything else goes through
+// productStore.ts, the mutable layer built on top of this seed.
 export function getAllProducts(): Product[] {
   return ALL_PRODUCTS;
-}
-
-export function getProductsByCategory(categorySlug: string): Product[] {
-  return ALL_PRODUCTS.filter((product) => product.category === categorySlug);
-}
-
-export function getProductBySlug(slug: string): Product | undefined {
-  return ALL_PRODUCTS.find((product) => product.slug === slug);
-}
-
-export function getProductById(id: string): Product | undefined {
-  return ALL_PRODUCTS.find((product) => product.id === id);
-}
-
-export function getRelatedProducts(product: Product, limit = 4): Product[] {
-  return ALL_PRODUCTS.filter(
-    (candidate) =>
-      candidate.category === product.category && candidate.id !== product.id,
-  ).slice(0, limit);
 }

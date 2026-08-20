@@ -1,6 +1,7 @@
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
-type Variant = "primary" | "secondary" | "secondary-on-dark" | "ghost";
+type Variant =
+  "primary" | "secondary" | "secondary-on-dark" | "ghost" | "danger";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
@@ -20,6 +21,10 @@ const variantClasses: Record<Variant, string> = {
     "border-2 border-white bg-transparent text-white hover:bg-white hover:text-brand-950 focus-visible:outline-white",
   ghost:
     "bg-transparent text-brand-800 hover:bg-surface-muted focus-visible:outline-brand-500",
+  // Destructive actions only (e.g. admin delete confirmations) — never
+  // used for primary storefront CTAs.
+  danger:
+    "bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

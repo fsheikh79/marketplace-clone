@@ -1,16 +1,17 @@
 import type { Product } from "@/types";
 import {
-  getAllProducts,
-  getProductById as getProductByIdSync,
-  getProductBySlug as getProductBySlugSync,
-  getRelatedProducts as getRelatedProductsSync,
-} from "@/features/products/lib/mockProducts";
+  listProducts,
+  findProductBySlug,
+  findProductById,
+} from "@/features/products/lib/productStore";
 
 /**
  * Mock product API. Every call here returns a Promise and takes the same
  * shape a real API Gateway/Lambda-backed fetch would, so call sites already
  * look async — swapping the body of these functions for real `fetch()`
- * calls in Phase 2 requires no changes anywhere else in the app.
+ * calls in Phase 2 requires no changes anywhere else in the app. Reads go
+ * through productStore.ts, the same mutable data source the admin
+ * dashboard writes to.
  */
 
 // MOCK: small artificial latency so loading states are actually observable
@@ -56,7 +57,7 @@ export async function getProducts(
     pageSize = DEFAULT_PAGE_SIZE,
   } = query;
 
-  let items = getAllProducts();
+  let items = listProducts();
 
   if (category) {
     items = items.filter((product) => product.category === category);
@@ -98,19 +99,25 @@ export async function getProducts(
 export async function getProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
-  return delay(getProductBySlugSync(slug));
+  return delay(findProductBySlug(slug));
 }
 
 export async function getRelatedProducts(
   product: Product,
   limit = 4,
 ): Promise<Product[]> {
-  return delay(getRelatedProductsSync(product, limit));
+  const related = listProducts()
+    .filter(
+      (candidate) =>
+        candidate.category === product.category && candidate.id !== product.id,
+    )
+    .slice(0, limit);
+  return delay(related);
 }
 
 export async function getProductsByIds(ids: string[]): Promise<Product[]> {
   const products = ids
-    .map((id) => getProductByIdSync(id))
+    .map((id) => findProductById(id))
     .filter((product): product is Product => Boolean(product));
   return delay(products);
 }
@@ -118,7 +125,7 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
 export async function searchProducts(query: string): Promise<Product[]> {
   const normalized = query.trim().toLowerCase();
   if (!normalized) return delay([]);
-  const matches = getAllProducts().filter((product) =>
+  const matches = listProducts().filter((product) =>
     [product.title, product.brand, product.category, product.description]
       .join(" ")
       .toLowerCase()

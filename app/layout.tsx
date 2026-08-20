@@ -2,11 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
-import { CartProvider } from "@/features/cart/context/CartContext";
-import { WishlistProvider } from "@/features/wishlist/context/WishlistContext";
-import { ToastProvider } from "@/features/toast/context/ToastContext";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +19,9 @@ export const metadata: Metadata = {
     "A full-feature e-commerce marketplace: browse products, compare, and check out securely.",
 };
 
+// Root layout, shared by the (shop) storefront and the admin dashboard.
+// Only what both trees need lives here (fonts, global CSS, auth session) —
+// each tree supplies its own chrome and providers below this.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -31,17 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="bg-surface text-brand-950 flex min-h-full flex-col">
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <ToastProvider>
-                <Header />
-                <main className="flex flex-1 flex-col">{children}</main>
-                <Footer />
-              </ToastProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

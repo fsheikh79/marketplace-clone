@@ -4,11 +4,14 @@
  * never redefine these shapes inconsistently across features.
  */
 
+export type UserRole = "customer" | "admin";
+
 export interface User {
   id: string;
   name: string;
   email: string;
   avatarUrl?: string;
+  role: UserRole;
   createdAt: string;
 }
 
